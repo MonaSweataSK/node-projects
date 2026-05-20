@@ -1,0 +1,32 @@
+[
+  {
+    "id": "task-1",
+    "title": "Design Glassmorphic UI Dashboard",
+    "description": "Create high-fidelity mockups and draft CSS custom properties for the new dark-mode glassmorphic theme.",
+    "status": "in-progress",
+    "priority": "high",
+    "category": "work",
+    "dueDate": "2026-05-25",
+    "createdAt": "2026-05-20T10:00:00.000Z"
+  },
+  {
+    "id": "task-2",
+    "title": "Implement Native Node HTTP Backend",
+    "description": "Build server.js using Node.js core 'http' module. Write custom routing logic, request body parsing, and CORS headers handling.",
+    "status": "todo",
+    "priority": "high",
+    "category": "work",
+    "dueDate": "2026-05-22",
+    "createdAt": "2026-05-20T10:15:00.000Z"
+  },
+  {
+    "id": "task-3",
+    "title": "Stock up on coffee and snacks",
+    "description": "Buy double espresso pods, dark chocolate, and mixed nuts for late-night coding sessions.",
+    "status": "completed",
+    "priority": "low",
+    "category": "personal",
+    "dueDate": "2026-05-20",
+    "createdAt": "2026-05-20T09:30:00.000Z"
+  }
+]
