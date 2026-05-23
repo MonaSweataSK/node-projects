@@ -656,3 +656,8 @@ textarea.form-control {
 .empty-state p {
   font-size: 0.9rem;
 }
+
+/* Global animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

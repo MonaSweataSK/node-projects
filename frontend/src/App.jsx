@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import TaskBoard from './components/TaskBoard';
 import TaskForm from './components/TaskForm';
 import Toast from './components/Toast';
@@ -127,8 +127,6 @@ export default function App() {
 
   // Delete Task
   const handleDeleteTask = async (taskId) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return;
-    
     try {
       const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
         method: 'DELETE'
@@ -157,14 +155,16 @@ export default function App() {
   };
 
 
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return true;
-    return (
-      task.title.toLowerCase().includes(query) ||
-      task.description.toLowerCase().includes(query)
-    );
-  });
+    if (!query) return tasks;
+    return tasks.filter((task) => {
+      return (
+        task.title.toLowerCase().includes(query) ||
+        task.description.toLowerCase().includes(query)
+      );
+    });
+  }, [tasks, searchQuery]);
 
   // Calculate statistics for the currently visible task set
   const totalCount = filteredTasks.length;
@@ -268,11 +268,6 @@ export default function App() {
             margin: '0 auto 1rem auto'
           }} />
           <p>Syncing task board...</p>
-          <style>{`
-            @keyframes spin {
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
         </div>
       ) : (
         <TaskBoard

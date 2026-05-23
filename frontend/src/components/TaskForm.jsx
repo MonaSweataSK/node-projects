@@ -17,7 +17,9 @@ export default function TaskForm({ task, onSubmit, onClose }) {
       setStatus(task.status || 'todo');
       setPriority(task.priority || 'medium');
       setCategory(task.category || 'work');
-      setDueDate(task.dueDate || new Date().toISOString().split('T')[0]);
+      const now = new Date();
+      const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      setDueDate(task.dueDate || todayLocal);
     } else {
       // Default date to today
       setTitle('');
@@ -25,7 +27,9 @@ export default function TaskForm({ task, onSubmit, onClose }) {
       setStatus('todo');
       setPriority('medium');
       setCategory('work');
-      setDueDate(new Date().toISOString().split('T')[0]);
+      const now = new Date();
+      const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      setDueDate(todayLocal);
     }
     setError('');
   }, [task]);
@@ -93,6 +97,7 @@ export default function TaskForm({ task, onSubmit, onClose }) {
               >
                 <option value="work">Work</option>
                 <option value="personal">Personal</option>
+                <option value="shopping">Shopping</option>
                 <option value="other">Other</option>
               </select>
             </div>

@@ -10,14 +10,21 @@ const MAX_BODY_SIZE = 1_000_000; // 1MB
 function getRequestBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
+    let rejected = false;
     req.on('data', chunk => {
       body += chunk.toString();
-      if (body.length > MAX_BODY_SIZE) {
+      if (!rejected && body.length > MAX_BODY_SIZE) {
+        rejected = true;
         reject(new Error('Request body too large'));
-        req.socket.destroy();
+        try {
+          req.socket.destroy();
+        } catch (e) {
+          // ignore socket destroy errors
+        }
       }
     });
     req.on('end', () => {
+      if (rejected) return;
       try {
         resolve(body ? JSON.parse(body) : {});
       } catch (err) {
@@ -25,7 +32,7 @@ function getRequestBody(req) {
       }
     });
     req.on('error', err => {
-      reject(err);
+      if (!rejected) reject(err);
     });
   });
 }
@@ -150,7 +157,9 @@ const server = http.createServer(async (req, res) => {
       const taskId = match[1];
       try {
         const body = await getRequestBody(req);
-        const validationError = validateTaskUpdateBody(body);
+        // Strip immutable fields if sent by client
+        const { id: _id, createdAt: _createdAt, ...safeBody } = body;
+        const validationError = validateTaskUpdateBody(safeBody);
         if (validationError) {
           sendJSONResponse(res, 400, { error: validationError });
           return;
@@ -167,12 +176,12 @@ const server = http.createServer(async (req, res) => {
         // Merge updates
         const updatedTask = {
           ...tasks[taskIndex],
-          title: body.title !== undefined ? body.title.trim() : tasks[taskIndex].title,
-          description: body.description !== undefined ? body.description.trim() : tasks[taskIndex].description,
-          status: body.status !== undefined ? body.status : tasks[taskIndex].status,
-          priority: body.priority !== undefined ? body.priority : tasks[taskIndex].priority,
-          category: body.category !== undefined ? body.category : tasks[taskIndex].category,
-          dueDate: body.dueDate !== undefined ? body.dueDate : tasks[taskIndex].dueDate
+          title: safeBody.title !== undefined ? safeBody.title.trim() : tasks[taskIndex].title,
+          description: safeBody.description !== undefined ? safeBody.description.trim() : tasks[taskIndex].description,
+          status: safeBody.status !== undefined ? safeBody.status : tasks[taskIndex].status,
+          priority: safeBody.priority !== undefined ? safeBody.priority : tasks[taskIndex].priority,
+          category: safeBody.category !== undefined ? safeBody.category : tasks[taskIndex].category,
+          dueDate: safeBody.dueDate !== undefined ? safeBody.dueDate : tasks[taskIndex].dueDate
         };
         
         tasks[taskIndex] = updatedTask;
