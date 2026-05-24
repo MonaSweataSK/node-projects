@@ -1,4 +1,4 @@
-# SyncBoard — Full Stack Task Workspace
+# BASIC CRUD APP— Full Stack Task Workspace
 
 SyncBoard is a lightweight, responsive Kanban task manager built as a multi-package full-stack application. It leverages a modern frontend powered by **React** and **Vite**, paired with a custom backend constructed entirely using the **native Node.js `http` module** (no Express or third-party web frameworks).
 
